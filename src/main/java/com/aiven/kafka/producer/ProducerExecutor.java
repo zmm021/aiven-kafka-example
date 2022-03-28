@@ -17,7 +17,7 @@ public class ProducerExecutor {
      * @param payload
      * @return
      */
-    public boolean putRecord(KFKRecord payload) {
+    public boolean produce(KFKRecord payload) {
         try {
             producer.send(new ProducerRecord<>(payload.getTopic(),  payload.getPayload()));
             return true;
