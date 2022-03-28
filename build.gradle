@@ -1,0 +1,115 @@
+//Plugins for build are specified above - no need for build script
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+}
+
+
+plugins {
+    id "org.springframework.boot" version "2.3.1.RELEASE"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "java"
+    id "idea"
+    id "com.bmuschko.docker-remote-api" version "6.4.0"
+}
+
+
+bootJar {
+    mainClassName = 'com.aiven.assignment.Application'
+    archiveBaseName = 'kafka-example'
+    archiveVersion = '0.1'
+}
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-parent', version: '2.3.1.RELEASE', ext: 'pom'
+    compile ("org.springframework.boot:spring-boot-starter-web") {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+    }
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf"){
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+    }
+    compile("org.springframework.boot:spring-boot-devtools"){
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+    }
+    testCompile("junit:junit")
+    compile 'com.typesafe:config:1.4.0'
+
+    compile group: 'com.google.cloud', name: 'google-cloud-bigquery', version: '1.116.3'
+    compile group: 'org.apache.kafka', name: 'connect-api', version: '2.5.0'
+    compile group: 'org.json', name: 'json', version: '20200518'
+    compile group: 'org.apache.avro', name: 'avro', version: '1.10.0'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+    compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.1.3'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.1'
+// https://mvnrepository.com/artifact/org.mockito/mockito-all
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '2.0.2-beta'
+// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0-M1'
+
+}
+
+docker {
+    registryCredentials {
+        url = 'https://gcr.io'
+        username = '_json_key'
+        //keep if running locally - remove when committing to Jenkins
+       // password = file(System.getProperty("user.home") + "/Documents/key.json").text
+    }
+}
+
+
+
+test {
+    exclude 'com/aiven/**'
+}
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import java.nio.file.Paths
+
+ 
+
+task assembleDocker(type: Copy) {
+    dependsOn build
+    from bootJar.archivePath
+    into Paths.get(buildDir as String, 'docker')
+}
+
+task createDockerfile(type: Dockerfile) {
+    destFile = new File(assembleDocker.destinationDir as String, 'Dockerfile')
+    from 'openjdk:8-jdk-alpine'
+    volume('/tmp')
+    workingDir("/opt/aiven/assignment")
+    addFile(bootJar.archiveName, '/opt/aiven/assignment.jar')
+    environmentVariable('JAVA_OPTS', '"-Xmx1024m"')
+    exposePort(8080)
+    entryPoint('java', '-jar', '/opt/aiven/assignment.jar')
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn assembleDocker
+    dependsOn createDockerfile
+    inputDir = assembleDocker.destinationDir
+}
+
+task pushImage(type: DockerPushImage) {
+    dependsOn buildImage
+}
+
