@@ -16,7 +16,7 @@ plugins {
 
 
 bootJar {
-    mainClassName = 'com.aiven.assignment.Application'
+    mainClassName = 'com.aiven.kafka.Application'
     archiveBaseName = 'kafka-example'
     archiveVersion = '0.1'
 }
@@ -96,11 +96,11 @@ task createDockerfile(type: Dockerfile) {
     destFile = new File(assembleDocker.destinationDir as String, 'Dockerfile')
     from 'openjdk:8-jdk-alpine'
     volume('/tmp')
-    workingDir("/opt/aiven/assignment")
-    addFile(bootJar.archiveName, '/opt/aiven/assignment.jar')
+    workingDir("/opt/aiven/kafka")
+    addFile(bootJar.archiveName, '/opt/aiven/kafka.jar')
     environmentVariable('JAVA_OPTS', '"-Xmx1024m"')
     exposePort(8080)
-    entryPoint('java', '-jar', '/opt/aiven/assignment.jar')
+    entryPoint('java', '-jar', '/opt/aiven/kafka.jar')
 }
 
 task buildImage(type: DockerBuildImage) {

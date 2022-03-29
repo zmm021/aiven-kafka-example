@@ -154,6 +154,7 @@ Currently, the status is *No active service integrations* as we have not yet act
 Select *Datasource* and *Metrics*, to easily enable integration with the grafana and kafka service you previously launched.
 ![img.png](src/main/resources/img/integration.png)
 That is all that is needed to get the advanced Kafka telemetry data flowing to the InfluxDB service, then being monitored in Grafana! 
+## 2.3 Login into Grafana
 
 Now, let's open the Grafana dashboard to see the data by going back to the service list and selecting the Grafana service:
 Open the *Service URI* displayed on the *Overview* page of Grafana service with any web browser. 
@@ -162,6 +163,7 @@ Open the *Service URI* displayed on the *Overview* page of Grafana service with 
 You should see a login page. Now, use the username and password on the Grafana service to login into Grafana. 
 ![img.png](src/main/resources/img/grafanalogin.png)
 
+## 2.4 Explore Your Service Metrics Through Grafana!
 The Grafana default view opens showing that we have one dashboard available:
 ![img.png](src/main/resources/img/kafkagranafadefault.png)
 

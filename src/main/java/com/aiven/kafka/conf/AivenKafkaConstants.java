@@ -1,8 +1,10 @@
 package com.aiven.kafka.conf;
 
 
-
-public interface IKafkaConstants {
+/**
+ * Configurations for your Aiven Kafka access
+ */
+public interface AivenKafkaConstants {
     String BOOTSTRAP_SERVERS = "kafka-mingming-test-thinkresearch-e997.aivencloud.com:23824";
     String SSL_TRUSTSTORE_LOCATION="/Users/mingmingzhang/Documents/temp/client.truststore.jks";
     String SSL_TRUSTSTORE_PASSWORD="abc123";

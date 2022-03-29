@@ -1,12 +1,8 @@
 package com.aiven.kafka;
 
-import com.aiven.kafka.producer.KFKRecord;
-import com.aiven.kafka.producer.ProducerExecutor;
-import org.apache.kafka.clients.CommonClientConfigs;
+import com.aiven.kafka.producer.AivenKafkaRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.config.SslConfigs;
 import org.json.JSONObject;
 
 import java.util.Properties;
@@ -16,6 +12,9 @@ public class ProducerTest {
         testKFKRecord();
     }
 
+    /**
+     * Test converting the kafka record from String or JSONObject
+     */
     public static void testKFKRecord(){
         String value = "{\"lat\":1234,\"log\":5678,\"timestamp\":\"2021-01-01 10:10:10\"}";
         String topicName = "gps_topic";
@@ -23,16 +22,20 @@ public class ProducerTest {
         JSONObject payload = new JSONObject();
         payload.put("topic",topicName);
         payload.put("payload",valueObj.toString());
-        KFKRecord record = KFKRecord.fromJSON(payload.toString());
+        AivenKafkaRecord record = AivenKafkaRecord.fromJSON(payload.toString());
         System.out.println(record.getTopic()+"   " +record.getPayload());
     }
+
+    /**
+     * Test creating a producer and produce a message to Kafka
+     */
     public static void testNaiveProduce(){
         String value = "{\"lat\":1234,\"log\":5678,\"timestamp\":\"2021-01-01 10:10:10\"}";
         String sasl_username = "avnadmin";
         String sasl_password = "YtTyyqXW5YbrVY8c";
 
 
-        KFKRecord kfkRecord = new KFKRecord("gps_topic",value);
+        AivenKafkaRecord aivenKafkaRecord = new AivenKafkaRecord("gps_topic",value);
         Properties props = new Properties();
         props.put("bootstrap.servers", "kafka-mingming-test-thinkresearch-e997.aivencloud.com:23824");
         props.put("security.protocol", "SSL");

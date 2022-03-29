@@ -13,15 +13,16 @@ public class ProducerExecutor {
     }
 
     /**
-     * send a record
+     * produce a record to Aiven Kafka
+     *
      * @param payload
      * @return
      */
-    public boolean produce(KFKRecord payload) {
+    public boolean produce(AivenKafkaRecord payload) {
         try {
-            producer.send(new ProducerRecord<>(payload.getTopic(),  payload.getPayload()));
+            producer.send(new ProducerRecord<>(payload.getTopic(), payload.getPayload()));
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }

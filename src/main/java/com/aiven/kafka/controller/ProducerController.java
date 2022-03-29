@@ -20,6 +20,11 @@ public class ProducerController {
     @Autowired
     ProducerService producerService;
 
+    /**
+     * API for producing a batch data in a JSONArray to Aiven Kafka topic
+     * @param payloadArray payload in JSON Array format
+     * @return
+     */
     @RequestMapping(value = "/avian/kafka/produce/batch", method = RequestMethod.POST)
     public ResponseEntity<?> produceBatch(@RequestBody String payloadArray){
         try {

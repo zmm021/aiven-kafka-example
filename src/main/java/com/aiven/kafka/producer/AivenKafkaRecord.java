@@ -3,7 +3,7 @@ package com.aiven.kafka.producer;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 
-public class KFKRecord{
+public class AivenKafkaRecord {
     private String payload;
     private String topic;
 
@@ -11,21 +11,32 @@ public class KFKRecord{
     private static String _payload="payload";
     private static String _topic="topic";
 
-    public static KFKRecord fromJSON(String object){
+    /**
+     * Convert a record object from a String
+     * @param object
+     * @return
+     */
+    public static AivenKafkaRecord fromJSON(String object){
         Gson gson = new Gson();
-        KFKRecord record = gson.fromJson(object,KFKRecord.class);
+        AivenKafkaRecord record = gson.fromJson(object, AivenKafkaRecord.class);
         return record;
     }
-    public static KFKRecord fromJSON(JSONObject object){
-        KFKRecord record = new KFKRecord();
+
+    /**
+     * Convert a record from JSONObject
+     * @param object
+     * @return
+     */
+    public static AivenKafkaRecord fromJSON(JSONObject object){
+        AivenKafkaRecord record = new AivenKafkaRecord();
         record.payload = object.getJSONObject(_payload).toString();
         record.topic = object.getString(_topic);
         return record;
     }
 
-    public KFKRecord(){}
+    public AivenKafkaRecord(){}
 
-    public KFKRecord(String topic,String value){
+    public AivenKafkaRecord(String topic, String value){
         this.topic = topic;
         this.payload = value;
     }
